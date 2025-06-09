@@ -26,7 +26,7 @@ def registrar(request):
             return redirect('lista_cursos')
     else:
         form = RegistroForm()
-    return render(request, 'registracion/registrar.html', {'form': form})
+    return render(request, 'registration/registrar.html', {'form': form})
 
 @login_required
 def crear_curso(request):
