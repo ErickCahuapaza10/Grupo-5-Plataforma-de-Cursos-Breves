@@ -1,0 +1,10 @@
+{% extends 'aplicacion/base.html' %}
+{% block content %}
+  <h2>Confirmar Salida del Curso</h2>
+  <p>¿Estás seguro de que deseas darte de baja de "{{ curso.nombre }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, darme de baja</button>
+    <a href="{% url 'detalle_curso' pk=curso.pk %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "aplicacion/base.html" %}
+
+{% block content %}
+    <h2>INICIO</h2>
+    {% if request.user.is_authenticated %}
+        <h3> {{ user.username }} Bienvenido!! </h3>
+    {% else %}
+        Este blog es un sitio para sus cursos!!! <br>
+        Creado con Django!!!
+    {% endif %}
+{% endblock %}

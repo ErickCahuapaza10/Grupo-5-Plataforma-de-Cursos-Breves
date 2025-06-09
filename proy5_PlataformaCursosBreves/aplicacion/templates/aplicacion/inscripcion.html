@@ -1,0 +1,34 @@
+{% extends 'aplicacion/base.html' %}
+{% block content %}
+  <h2>Inscribirse al Curso</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    {# Errores no asociados a un campo específico #}
+    {% if form.non_field_errors %}
+      <ul class="errorlist">
+        {% for err in form.non_field_errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {# Renderizado de cada campo del formulario #}
+    {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+          <ul class="errorlist">
+            {% for err in field.errors %}
+              <li>{{ err }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Inscribirse</button>
+  </form>
+{% endblock %}

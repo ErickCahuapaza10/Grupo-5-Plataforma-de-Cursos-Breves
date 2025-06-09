@@ -1,19 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout,login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.utils import timezone
 from .forms import CursoForm,InscripcionForm,MaterialForm,RegistroForm
-from .models import Material,Inscripcion,Curso,PerfilUsuario
+from .models import Material,Inscripcion,Curso,PerfilUsuario,Profesor
 
-
-def Principal(request): 
-    return render(request,'aplicacion/principal.html')
+def home(request):
+    return render(request, 'aplicacion/home.html')
 
 def salir(request):
     logout(request)
-    return redirect('principal')
+    return redirect('home')
 
 def registrar(request):
     if request.method == 'POST':
@@ -27,7 +26,7 @@ def registrar(request):
             return redirect('lista_cursos')
     else:
         form = RegistroForm()
-    return render(request, 'registration/registrar.html', {'form': form})
+    return render(request, 'registracion/registrar.html', {'form': form})
 
 @login_required
 def crear_curso(request):
@@ -99,7 +98,7 @@ def salirse_curso(request, curso_id):
     if request.method == 'POST':
         inscripcion.delete()
         return redirect('lista_cursos')  # o donde quieras redirigir después
-    return render(request, 'confirmar_salida.html', {'curso': inscripcion.id_curso})
+    return render(request, 'aplicacion/confirmar_salida.html', {'curso': inscripcion.id_curso})
 
 def inscribirse_curso(request):
     if request.method == 'POST':
@@ -111,7 +110,20 @@ def inscribirse_curso(request):
             return redirect('lista_cursos') 
     else:
         form = InscripcionForm()
-    return render(request, 'inscripcion.html', {'form': form})
+    return render(request, 'aplicacion/inscripcion.html', {'form': form})
 
+def editar_curso(request, pk):
+    curso = get_object_or_404(Curso, pk = pk)
+    if(curso.id_profesor.autor != request.user):
+        return HttpResponseForbidden("No tiene permiso para editar el curso.")
+    
+    if(request.method == 'POST'):
+        form = CursoForm(request.POST, instance=curso)
+        if(form.is_valid()):
+            form.save()
+            return redirect('detalle_curso', pk=curso.pk)
+        
+    else:
+        form = CursoForm(instance=curso)
+    return render(request, 'aplicacion/editar_curso.html', {'form': form})
 
-# Create your views here.

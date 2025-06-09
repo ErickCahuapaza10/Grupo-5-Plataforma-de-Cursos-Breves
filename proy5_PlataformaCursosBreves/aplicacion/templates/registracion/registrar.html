@@ -1,0 +1,27 @@
+{% extends 'aplicacion/base.html' %}
+{% block content %}
+  <h2>Registro</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.username.label_tag }}
+    {{ form.username }}
+    {{ form.email.label_tag }}
+    {{ form.email }}
+    {{ form.password1.label_tag }}
+    {{ form.password1 }}
+    {{ form.password2.label_tag }}
+    {{ form.password2 }}
+
+    <fieldset>
+      <legend>{{ form.rol.label }}</legend>
+      {{ form.rol }}
+      {% if form.rol.errors %}
+        <ul class="errorlist">
+          {% for e in form.rol.errors %}<li>{{ e }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "publicacion/base.html" %}
+
+{% block content %}
+    <h1>DETALLE CURSO</h1>
+    <p>
+        nombre:{{curso.nom_curso}}
+        capacidad:{{curso.capacidad}}
+    </p>
+{% if user.is_authenticated %}
+        <h3>EDITAR CURSO</h3>
+        <a href=" {% url 'editar_curso' curso.pk %} ">Editar</a>
+    {% endif %}
+
+    <h3>ELIMINAR CURSO</h3>
+    <a href=" {% url 'eliminar_curso' curso.pk %} ">Eliminar</a>
+
+
+
+    {% if user.is_authenticated %}
+        <h3>AGREGAR MATERIAL</h3>
+        <form action="{% url 'subir_material' curso.pk %}" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+
+            <button type= "submit">Guardar</button>
+
+        </form>
+
+    {% endif %}
+
+    
+
+    <h3>VOLVER A LA LISTA DE CURSOS</h3>
+    <a href=" {% url 'lista_cursos' %} ">Volver</a>
+
+   
+{% endblock  %}

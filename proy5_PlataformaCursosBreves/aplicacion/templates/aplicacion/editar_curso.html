@@ -1,0 +1,11 @@
+{% extends "aplicacion/base.html" %}
+
+{% block content %}
+    <h1>EDITAR CURSO</h1>
+    <form action="" method="post">
+        {% csrf_token %}  
+        {{ form.as_p }}
+
+        <button type="submit">Guardar</button>
+    </form>
+{% endblock  %}
