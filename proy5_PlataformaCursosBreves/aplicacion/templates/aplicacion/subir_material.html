@@ -1,32 +1,45 @@
 {% extends 'aplicacion/base.html' %}
-{% block content %}
-<h2>Subir Material</h2>
 
-<form method="post" enctype="multipart/form-data">
+{% block content %}
+  <h2>Subir Material para: {{ curso.nom_curso }}</h2>
+
+  <form action="{% url 'subir_material' curso.pk %}"
+        method="post"
+        enctype="multipart/form-data">
     {% csrf_token %}
 
+   
     {% if form.non_field_errors %}
-    <ul class="errorlist">
+      <ul class="errorlist">
         {% for err in form.non_field_errors %}
-        <li>{{ err }}</li>
+          <li>{{ err }}</li>
         {% endfor %}
-    </ul>
+      </ul>
     {% endif %}
 
     {% for field in form %}
-    <div class="form-group">
+      <div class="form-group">
         {{ field.label_tag }}
         {{ field }}
-        {% if field.errors %}
-        <ul class="errorlist">
-            {% for err in field.errors %}
-            <li>{{ err }}</li>
-            {% endfor %}
-        </ul>
+        {% if field.help_text %}
+          <small class="form-text text-muted">{{ field.help_text }}</small>
         {% endif %}
-    </div>
+        {% if field.errors %}
+          <ul class="errorlist">
+            {% for err in field.errors %}
+              <li>{{ err }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
     {% endfor %}
 
     <button type="submit" class="btn btn-primary">Subir Material</button>
-</form>
+  </form>
+
+  <p>
+    <a href="{% url 'detalle_curso' curso.pk %}">
+      ← Volver al detalle del curso
+    </a>
+  </p>
 {% endblock %}

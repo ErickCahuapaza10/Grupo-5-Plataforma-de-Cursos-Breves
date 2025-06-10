@@ -6,6 +6,9 @@ from django.http import HttpResponseForbidden
 from django.utils import timezone
 from .forms import CursoForm,InscripcionForm,MaterialForm,RegistroForm
 from .models import Material,Inscripcion,Curso,PerfilUsuario,Profesor
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from .models import Curso, Inscripcion
 
 def home(request):
     return render(request, 'aplicacion/home.html')
@@ -20,14 +23,20 @@ def registrar(request):
         if form.is_valid():
             usuario = form.save()
             rol = form.cleaned_data['rol']
-            # Crear el perfil con el rol
             PerfilUsuario.objects.create(usuario=usuario, rol=rol)
+            if rol == 'maestro':
+                # aquí habrías de pedir nombre/apellido en el form, 
+                # o usar el username como ambos:
+                Profesor.objects.create(
+                    nombre=usuario.username,
+                    apellido='',
+                    autor=usuario
+                )
             login(request, usuario)
             return redirect('lista_cursos')
     else:
         form = RegistroForm()
     return render(request, 'registration/registrar.html', {'form': form})
-
 @login_required
 def crear_curso(request):
     if request.method == 'POST':
@@ -48,16 +57,24 @@ def lista_cursos(request):
     cursos = Curso.objects.all()
     return render(request,'aplicacion/lista_cursos.html', {'cursos':cursos})
 
+
+def cursos_inscritos(request):
+    inscripciones = Inscripcion.objects.filter(autor=request.user).select_related('id_curso')
+    cursos = [i.id_curso for i in inscripciones]
+    return render(request, 'aplicacion/cursos_inscritos.html', {'cursos': cursos})
+
+@login_required
 def detalle_curso(request, pk):
-    curso = get_object_or_404(Curso,pk=pk)
-    materiales = Material.objects.filter(curso = curso)
-    form_Material = MaterialForm() if request.user.is_authenticated else None
-    contexto ={
-        'curso':curso,
-        'material':materiales,
-        'form_material':form_Material,
-    }
-    return render(request, 'aplicacion/detalle_curso.html',contexto)
+    curso       = get_object_or_404(Curso, pk=pk)
+    materiales  = Material.objects.filter(id_curso=curso)
+    is_profesor = (request.user.perfilusuario.rol == 'maestro')
+    is_inscrito = Inscripcion.objects.filter(autor=request.user, id_curso=curso).exists()
+    return render(request, 'aplicacion/detalle_curso.html', {
+        'curso': curso,
+        'materiales': materiales,
+        'is_profesor': is_profesor,
+        'is_inscrito': is_inscrito,
+    })
 
 def eliminar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
@@ -81,18 +98,22 @@ def editar_material(request, pk):
         form = MaterialForm(instance=material)
     return render(request, 'aplicacion/editar_material.html', {'form': form})
 
-def subir_material(request):
+def subir_material(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
     if request.method == 'POST':
         form = MaterialForm(request.POST, request.FILES)
         if form.is_valid():
-            material = form.save(commit=False)
-            material.fecha_subida = timezone.now()
-            material.save()
-            return redirect('detalle_curso')
+            mat = form.save(commit=False)
+            mat.id_curso = curso
+            mat.id_profesor = get_object_or_404(Profesor, autor=request.user)
+            mat.save()
+            return redirect('detalle_curso', curso.pk)
     else:
         form = MaterialForm()
-    return render(request, 'aplicacion/subir_material.html', {'form': form})
-
+    return render(request, 'aplicacion/subir_material.html', {
+        'form': form,
+        'curso': curso
+    })
 def salirse_curso(request, curso_id):
     inscripcion = get_object_or_404(Inscripcion, autor=request.user, id_curso_id=curso_id)
     if request.method == 'POST':
@@ -100,17 +121,15 @@ def salirse_curso(request, curso_id):
         return redirect('lista_cursos')  # o donde quieras redirigir después
     return render(request, 'aplicacion/confirmar_salida.html', {'curso': inscripcion.id_curso})
 
-def inscribirse_curso(request):
-    if request.method == 'POST':
-        form = InscripcionForm(request.POST)
-        if form.is_valid():
-            inscripcion = form.save(commit=False)
-            inscripcion.autor = request.user 
-            inscripcion.save()
-            return redirect('lista_cursos') 
-    else:
-        form = InscripcionForm()
-    return render(request, 'aplicacion/inscripcion.html', {'form': form})
+
+
+@login_required
+def inscribirse_curso(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    
+    if not Inscripcion.objects.filter(autor=request.user, id_curso=curso).exists():
+        Inscripcion.objects.create(autor=request.user, id_curso=curso)
+    return redirect('detalle_curso', pk=curso.pk)
 
 def editar_curso(request, pk):
     curso = get_object_or_404(Curso, pk = pk)

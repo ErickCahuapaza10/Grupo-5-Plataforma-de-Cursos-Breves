@@ -4,8 +4,8 @@
     <h1>LISTA DE CURSOS</h1>
     <ul>
             {% for curso in cursos %}
-                    <li>nombre:{{curso.nom_curso}}</li><br>
-                    <li>capacidad:{{curso.capacidad}}</li><br>
+                    <li>nombre:{{curso.nom_curso}} -------- capacidad:{{curso.capacidad}}</li><a href="{% url 'detalle_curso' curso.pk %}">Detalle</a>
+                    
             {% endfor %}
 
         

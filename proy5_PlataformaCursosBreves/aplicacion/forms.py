@@ -5,10 +5,11 @@ from .models import Profesor, Curso, Inscripcion, Material,PerfilUsuario
 
 class RegistroForm(UserCreationForm):
     rol = forms.ChoiceField(choices=PerfilUsuario.ROL_CHOICES, label="Tipo de usuario")
-
+    email = forms.EmailField(required=True)
+    
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'rol']
+        fields = ['username', 'email','password1', 'password2', 'rol','first_name','last_name']
         
 class ProfesorForm(forms.ModelForm):
     class Meta:

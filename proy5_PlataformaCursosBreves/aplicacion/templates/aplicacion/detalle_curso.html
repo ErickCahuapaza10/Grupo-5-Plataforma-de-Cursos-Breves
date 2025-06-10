@@ -1,32 +1,73 @@
-{% extends "publicacion/base.html" %}
+{% extends "aplicacion/base.html" %}
 
 {% block content %}
     <h1>DETALLE CURSO</h1>
     <p>
         nombre:{{curso.nom_curso}}
         capacidad:{{curso.capacidad}}
+        id profesor: {{curso.id_profesor}}
     </p>
-{% if user.is_authenticated %}
+    {% if not is_profesor and user.is_authenticated and is_inscrito %}
+    <h3>Materiales (alumnos)</h3>
+    <ul>
+      {% for mat in materiales %}
+        <li>
+          {{ mat.nom_material }} –
+          <a href="{{ mat.archivo.url }}" target="_blank">Ver/Descargar</a>
+        </li>
+      {% empty %}
+        <li>No hay materiales aún.</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+    {% if user.perfilusuario.rol == 'normal' %}
+        {% if user.is_authenticated %}
+            {% if not is_inscrito %}
+                <a href="{% url 'inscribirse_curso' curso.pk %}">Inscribirse</a>
+        {% else %}
+            <p>Ya estás inscrito en este curso.</p>
+        {% endif %}
+    {% endif %}
+    
+    {% endif %}
+ {% if is_profesor and user.is_authenticated %}
+ 
+     <h3>MATERIALES (edición)</h3>
+  <ul>
+    {% for mat in materiales %}
+      <li>
+        {{ mat.nom_material }} – {{ mat.descripcion }}
+        <a href="{% url 'editar_material' mat.pk %}">Editar</a>
+      </li>
+    {% empty %}
+      <li>No hay materiales aún.</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if user.perfilusuario.rol == 'maestro' %}
+    {% if user.is_authenticated %}
         <h3>EDITAR CURSO</h3>
         <a href=" {% url 'editar_curso' curso.pk %} ">Editar</a>
     {% endif %}
 
     <h3>ELIMINAR CURSO</h3>
     <a href=" {% url 'eliminar_curso' curso.pk %} ">Eliminar</a>
+     {% if is_profesor %}
+  <h3>AGREGAR MATERIAL</h3>
+  <form action="{% url 'subir_material' curso.pk %}"
+        method="post"
+        enctype="multipart/form-data">   
+    {% csrf_token %}
+    {{ form_material.as_p }}
+    <button type="submit">Guardar</button>
+  </form>
+{% endif %}
+  {% endif %}
 
 
 
-    {% if user.is_authenticated %}
-        <h3>AGREGAR MATERIAL</h3>
-        <form action="{% url 'subir_material' curso.pk %}" method="post">
-            {% csrf_token %}
-            {{form.as_p}}
 
-            <button type= "submit">Guardar</button>
-
-        </form>
-
-    {% endif %}
+ 
 
     
 

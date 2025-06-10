@@ -1,13 +1,18 @@
-{% extends "aplicacion/base.html" %}
-
+{% extends 'aplicacion/base.html' %}
 {% block content %}
-    <h2>LOGIN</h2> <br>
-    <form action="" method="post">
-        {% csrf_token %}
-        
-        <input type="text" name="username" placeholder="nombre usuario"> <br>
-        <input type="password" name="password" placeholder="contraseña"> <br>
-        <button type="submit">Ingresar</button>
-    </form>
-    
-{% endblock %}
+  <h2>Iniciar Sesion</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% for err in field.errors %}
+          <div class="text-danger">{{ err }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Ingresar</button>
+  </form>
+{% endblock %}
