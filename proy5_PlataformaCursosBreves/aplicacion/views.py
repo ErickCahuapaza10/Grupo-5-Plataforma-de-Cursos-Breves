@@ -39,18 +39,20 @@ def registrar(request):
     return render(request, 'registration/registrar.html', {'form': form})
 @login_required
 def crear_curso(request):
+    try:
+        profesor = Profesor.objects.get(autor=request.user)
+    except Profesor.DoesNotExist:
+        return HttpResponseForbidden("Solo los profesores pueden crear cursos.")
     if request.method == 'POST':
         form = CursoForm(request.POST)
         if form.is_valid():
             curso = form.save(commit=False)
-            profesor = Profesor.objects.filter(autor=request.user).first()
-            if not profesor:
-                return HttpResponseForbidden("Debes ser profesor para crear cursos.")
-            curso.id_profesor = profesor
+            curso.id_profesor = profesor 
             curso.save()
             return redirect('lista_cursos')
     else:
         form = CursoForm()
+
     return render(request, 'aplicacion/crear_curso.html', {'form': form})
 
 def lista_cursos(request):
@@ -145,4 +147,21 @@ def editar_curso(request, pk):
     else:
         form = CursoForm(instance=curso)
     return render(request, 'aplicacion/editar_curso.html', {'form': form})
+@login_required
+def lista_estudiantes_curso(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
 
+    # Solo el profesor que creó el curso puede ver la lista
+    if curso.id_profesor.autor != request.user:
+        return HttpResponseForbidden("No tienes permiso para ver los inscritos de este curso.")
+
+    estudiantes = (
+        Inscripcion.objects
+        .filter(id_curso=curso)
+        .select_related('autor')
+        .order_by('autor__username')
+    )
+    return render(request, 'aplicacion/lista_estudiantes.html', {
+        'curso': curso,
+        'estudiantes': estudiantes,
+    })

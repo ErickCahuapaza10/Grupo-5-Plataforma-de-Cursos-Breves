@@ -1,0 +1,14 @@
+{% extends 'aplicacion/base.html' %}
+{% block content %}
+<h2>Estudiantes inscritos en {{ curso.nombre }}</h2>
+
+<ul>
+  {% for insc in estudiantes %}
+      <li>{{ insc.autor.username }} – {{ insc.autor.email }}</li>
+  {% empty %}
+      <li>Aún no hay estudiantes inscritos.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'detalle_curso' curso.pk %}">← Volver al curso</a>
+{% endblock %}

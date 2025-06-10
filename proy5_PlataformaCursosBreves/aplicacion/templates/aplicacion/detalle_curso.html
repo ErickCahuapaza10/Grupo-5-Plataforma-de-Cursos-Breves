@@ -44,6 +44,9 @@
     {% endfor %}
   </ul>
   {% endif %}
+  {% if is_profesor %}
+  <a href="{% url 'lista_estudiantes' curso.pk %}" class="btn btn-primary">Ver estudiantes inscritos </a>
+  {% endif %}
   {% if user.perfilusuario.rol == 'maestro' %}
     {% if user.is_authenticated %}
         <h3>EDITAR CURSO</h3>

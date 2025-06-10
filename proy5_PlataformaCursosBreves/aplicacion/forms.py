@@ -19,7 +19,7 @@ class ProfesorForm(forms.ModelForm):
 class CursoForm(forms.ModelForm):
     class Meta:
         model = Curso
-        fields = ['nom_curso', 'capacidad', 'id_profesor']
+        fields = ['nom_curso', 'capacidad'] 
 
 class InscripcionForm(forms.ModelForm):
     class Meta:
