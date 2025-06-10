@@ -3,9 +3,9 @@
 {% block content %}
     <h1>DETALLE CURSO</h1>
     <p>
-        nombre:{{curso.nom_curso}}
-        capacidad:{{curso.capacidad}}
-        id profesor: {{curso.id_profesor}}
+        <strong>Nombre del Curso:</strong> {{curso.nom_curso}} <br>
+        <strong>Capacidad:</strong> {{curso.capacidad}} <br>
+        <strong>Nombre del Profesor:</strong> {{profesor.nombre}} {{ profesor.apellido }}
     </p>
     {% if not is_profesor and user.is_authenticated and is_inscrito %}
     <h3>Materiales (alumnos)</h3>

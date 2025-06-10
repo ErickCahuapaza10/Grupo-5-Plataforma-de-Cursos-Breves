@@ -29,7 +29,7 @@ def registrar(request):
                 # o usar el username como ambos:
                 Profesor.objects.create(
                     nombre=usuario.username,
-                    apellido='',
+                    apellido=usuario.last_name,
                     autor=usuario
                 )
             login(request, usuario)
@@ -69,11 +69,13 @@ def cursos_inscritos(request):
 def detalle_curso(request, pk):
     curso       = get_object_or_404(Curso, pk=pk)
     materiales  = Material.objects.filter(id_curso=curso)
+    profesor = curso.id_profesor
     is_profesor = (request.user.perfilusuario.rol == 'maestro')
     is_inscrito = Inscripcion.objects.filter(autor=request.user, id_curso=curso).exists()
     return render(request, 'aplicacion/detalle_curso.html', {
         'curso': curso,
         'materiales': materiales,
+        'profesor': profesor,
         'is_profesor': is_profesor,
         'is_inscrito': is_inscrito,
     })
