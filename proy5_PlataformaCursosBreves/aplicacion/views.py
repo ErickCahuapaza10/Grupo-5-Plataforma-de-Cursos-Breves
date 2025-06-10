@@ -9,7 +9,6 @@ from .models import Material,Inscripcion,Curso,PerfilUsuario,Profesor
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from .models import Curso, Inscripcion
-
 def home(request):
     return render(request, 'aplicacion/home.html')
 
@@ -153,7 +152,6 @@ def editar_curso(request, pk):
 def lista_estudiantes_curso(request, curso_id):
     curso = get_object_or_404(Curso, pk=curso_id)
 
-    # Solo el profesor que creó el curso puede ver la lista
     if curso.id_profesor.autor != request.user:
         return HttpResponseForbidden("No tienes permiso para ver los inscritos de este curso.")
 
@@ -166,4 +164,4 @@ def lista_estudiantes_curso(request, curso_id):
     return render(request, 'aplicacion/lista_estudiantes.html', {
         'curso': curso,
         'estudiantes': estudiantes,
-    })
+})

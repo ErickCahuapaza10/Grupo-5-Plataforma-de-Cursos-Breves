@@ -15,7 +15,7 @@ class Profesor(models.Model):
 class PerfilUsuario(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     ROL_CHOICES = (
-        ('normal', 'Usuario Normal'),
+        ('normal', 'Estudiante'),
         ('maestro', 'Maestro'),
     )
     rol = models.CharField(max_length=10, choices=ROL_CHOICES, default='normal')
@@ -55,8 +55,4 @@ class Material(models.Model):
     
     def __str__(self):
         return f"{self.nom_material}"
-    
-    
-    
-    
     

@@ -1,10 +1,10 @@
 {% extends 'aplicacion/base.html' %}
 {% block content %}
-<h2>Estudiantes inscritos en {{ curso.nombre }}</h2>
+<h2>Estudiantes inscritos en {{ curso.nom_curso }}</h2>
 
 <ul>
   {% for insc in estudiantes %}
-      <li>{{ insc.autor.username }} – {{ insc.autor.email }}</li>
+      <li>{{ insc.autor.username }} {{ insc.autor.last_name }} – {{ insc.autor.email }} </li>
   {% empty %}
       <li>Aún no hay estudiantes inscritos.</li>
   {% endfor %}
