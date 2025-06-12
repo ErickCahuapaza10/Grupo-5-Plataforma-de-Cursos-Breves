@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout,login
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from django.utils import timezone
-from .forms import CursoForm,InscripcionForm,MaterialForm,RegistroForm
-from .models import Material,Inscripcion,Curso,PerfilUsuario,Profesor
+from .forms import CursoForm,MaterialForm,RegistroForm
+from .models import Material,Inscripcion,Curso,PerfilUsuario,Profesor,Curso, Inscripcion
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
-from .models import Curso, Inscripcion
+
 def home(request):
     return render(request, 'aplicacion/home.html')
 
