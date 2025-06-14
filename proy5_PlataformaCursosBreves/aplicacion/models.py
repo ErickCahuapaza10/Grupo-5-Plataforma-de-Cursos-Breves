@@ -2,7 +2,8 @@ from django.db import models
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-# Create your models here.
+from django.utils import timezone
+
 
 class Profesor(models.Model):
     nombre = models.CharField(max_length=30)
@@ -47,15 +48,21 @@ class Inscripcion(models.Model):
         return f"{self.autor} {self.id_curso} {self.fecha}"
     
 class Material(models.Model):
-    nom_material = models.CharField(max_length=30)
-    descripcion = models.TextField()
-    fecha_subida = models.DateField(auto_now_add=True)
-    archivo = models.FileField(upload_to='materiales/', null=True, blank=True)
-    id_curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='materiales')
-    id_profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='materiales_subidos')
-    
+    nom_material = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True)
+    archivo = models.FileField(upload_to='materiales/')
+    id_curso = models.ForeignKey('Curso', on_delete=models.CASCADE)
+    id_profesor = models.ForeignKey('Profesor', on_delete=models.CASCADE)
+    requiere_entrega = models.BooleanField(default=False)
+    fecha_limite = models.DateTimeField(null=True, blank=True)
+
+    def esta_vencido(self):
+        if self.requiere_entrega and self.fecha_limite:
+            return timezone.now() > self.fecha_limite
+        return False
+
     def __str__(self):
-        return f"{self.nom_material}"
+        return self.nom_material
     
 class Entrega(models.Model):
     estudiante = models.ForeignKey(User, on_delete=models.CASCADE, related_name='entregas')

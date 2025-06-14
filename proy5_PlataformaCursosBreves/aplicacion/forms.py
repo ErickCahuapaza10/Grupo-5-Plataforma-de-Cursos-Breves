@@ -30,7 +30,9 @@ class InscripcionForm(forms.ModelForm):
 class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
-        fields = ['nom_material', 'descripcion', 'archivo', 'id_curso', 'id_profesor']
+        fields = ['nom_material', 'descripcion', 'archivo', 'requiere_entrega', 'fecha_limite']
+        widgets = {'fecha_limite': forms.DateTimeInput(attrs={'type': 'datetime-local'}),}
+
 
 class EntregaForm(forms.ModelForm):
     class Meta:

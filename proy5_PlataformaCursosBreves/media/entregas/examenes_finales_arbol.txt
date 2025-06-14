@@ -1,0 +1,235 @@
+1:
+Recursividad(Nodo a,Nodo b){
+	if(a<>null)and(b<>null){
+		if(a.getN()=b.getN())
+			return Recursividad(a.getSig(),b.getSig()) or true
+		else
+			return false	
+	}
+	else{
+		if(a=null)and(b=null)
+			return true;
+		else	
+			return false;
+	}
+}
+2:
+subArbol(NodoA r,int x){
+	if(r!=null){
+		if(r.getN()=x)
+			print(Mayor(r,r.getN()),Menor(r,r.getN()))
+		subArbol(r.getIzq(),x)
+		subArbol(r.getDer(),x)	
+	}
+}
+Mayor(NodoA r){
+	if(r!=null){
+		mayI=Mayor(r.getI())
+		mayD=Mayor(r.getD())
+		if mayI>mayD
+			may=mayI
+		else
+			may=mayD
+		if r.getN()>may
+			may=r.getN()
+		return may
+	}
+	else
+		return 0
+}
+Menor(NodoA r){
+	if(r!=null){
+		mayI=Menor(r.getI())
+		mayD=Menor(r.getD())
+		if mayI<mayD
+			may=mayI
+		else
+			may=mayD
+		if r.getN()<may
+			may=r.getN()
+		return may
+	}
+	else
+		return 1000
+}
+3:
+buscar nivel kesimo
+buscarNK(Bosque a,int k){
+	ColaA ni=new ColaA()
+	ColaA des=new ColaA()
+	ni.adicionar(a.getRaiz())
+	c=0
+	while(!ni.esVacia()){		
+		while(!ni.esVacia()){
+			NodoA r=ni.eliminar()
+			if c=k
+				VerificarA(r.getA().getRaiz())
+			if r.getIzq()<>null
+				des.adicionar(r.getIzq())
+			if r.getDer()<>null
+				des.adicionar(r.getDer())
+		}
+		ni.vaciar(desc)
+		c=c+1
+	}		
+}
+Verificar(NodoA r){
+	if contarA(r.getIzq())=contarA(r.getDer())
+		print("si tienen el mismo numero de desendientes")
+	else
+		print("no tienen el mismo numero de desendientes")		
+}
+contarA(NodoA r){
+	if r<>null{
+		return(contarA(r.getIzq())+contarA(r.getDer())+1)
+	}
+	else 	
+		return 0
+}
+EXAMEN 2
+1:
+contarEstudiantes(NodoM r){
+	if(r<>null)
+		return(contarEstudiantes(r.getSig())+1)
+	else
+		return 0
+}
+promedioAprobados(NodoM r,int n){
+	if(r<>null){
+		prom=0
+		if(r.getExamen1()+r.getExamen2()+r.getExamenFinal()+r.getPracticas()+r.getAyudantia())>51
+			prom=(r.getExamen1()+r.getExamen2()+r.getExamenFinal()+r.getPracticas()+r.getAyudantia())/n		
+		return prom+promedioAprobados(r.getSig(),n)	
+	}
+	else
+		return 0
+}
+2:
+buscarNivelX(ArbolB a,int x){
+	Cola ni=new Cola()
+	Cola des=new Cola()
+	c=0
+	ni.adicionar(a.getRaiz())
+	while(!ni.esVacia()){
+		while(!.ni.esVacia()){
+			NodoA r=ni.eliminar()
+			if r.getD()=x
+				return c
+			if r.getIzq()<>null	
+				des.adicionar(r.getIzq())
+			if r.getDer()<>null
+				des.adicionar(r.getDer())	 					
+		}
+		c=c+1
+		ni.vaciar(des)
+	}
+	return -1
+}
+PodarNivelX(ArbolB a,int n){
+	Cola ni=new Cola()
+	Cola des=new Cola()
+	c=0
+	ni.adicionar(a.getRaiz())
+	while(!ni.esVacia()){
+		while(!.ni.esVacia()){
+			NodoA r=ni.eliminar()
+			if c=n{
+				r.setDer(null)
+				r.setIzq(null)
+			}	
+			if r.getIzq()<>null	
+				des.adicionar(r.getIzq())
+			if r.getDer()<>null
+				des.adicionar(r.getDer())	 					
+		}
+		c=c+1
+		ni.vaciar(des)
+	}	
+}
+3:
+buscarX(NodoA r,int x){
+	if r<>null{
+		if r.getD()=x
+			calcularDif(r)
+		buscarX(r.getIzq(),x)
+		buscarX(r.getDer(),x)
+	}	
+}
+calcularDir(NodoA r){
+	print(mayor(r)-menor(r))		
+}
+mayor(NodoA r){
+	if r<>null{
+		mayI=mayor(r.getIzq())
+		mayD=mayor(r.getDer())
+		if mayI>mayD
+			may=mayI
+		else
+			may=mayD
+		if r.getD()>may
+			may=r.getD()
+		return may
+	}
+	else
+		return 0
+}
+menor(NodoA r){
+	if r<>null{
+		menI=menor(r.getIzq())
+		menD=menor(r.getDer())
+		if menI>menD
+			men=menI
+		else
+			men=menD
+		if r.getD()>men
+			men=r.getD()
+		return men
+	}
+	else
+		return 100000
+}
+EXAMEN 3
+1:
+mostraMX(ListaM a,String x){
+	print("Oro:",contarMX(a.getP(),x,"oro"),"Plata:",contarMX(a.getP(),x,"plata"),"Bronce:",contarMX(a.getP(),x,"bronce"))
+}
+contarMX(NodoM r,String x,String t){
+	if r<>null{
+		c=contarMX(r.getSig(),x,t)
+		if r.getMedalla()=t
+			c=c+1
+	}
+	else
+		return 0
+}
+2:
+verficarABB(NodoA r1,ArbolBB B){
+	if r<>null{
+		bol=false
+		if(buscar(r.getD(),B))
+			bol=true
+		return(bol and verificar(r1.getIzq(),B) and verificar(r1.getDer(),B))			
+	}
+	else
+		return true
+}
+buscar(int x,ArbolBB B){
+	NodoA r=B.getRaiz()
+	while r<>null{
+		if x>r.getD(){
+			if r.getDer()<>null
+				r=r.getDer()
+			
+		}
+		else{
+			if x<r.getD(){
+				if r.getIzq()<>null
+					r=r.getIzq()
+			}
+			else{
+				return true
+			}
+		}
+	}
+	return false
+}

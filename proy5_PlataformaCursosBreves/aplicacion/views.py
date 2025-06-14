@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout,login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .forms import CursoForm,MaterialForm,RegistroForm
-from .models import Material,Inscripcion,Curso,PerfilUsuario,Profesor,Curso, Inscripcion
+from .forms import CursoForm,MaterialForm,RegistroForm,EntregaForm
+from .models import Material,Inscripcion,Curso,PerfilUsuario,Profesor,Curso, Inscripcion,Entrega
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 def home(request):
     return render(request, 'aplicacion/home.html')
@@ -22,8 +23,6 @@ def registrar(request):
             rol = form.cleaned_data['rol']
             PerfilUsuario.objects.create(usuario=usuario, rol=rol)
             if rol == 'maestro':
-                # aquí habrías de pedir nombre/apellido en el form, 
-                # o usar el username como ambos:
                 Profesor.objects.create(
                     nombre=usuario.username,
                     apellido=usuario.last_name,
@@ -119,7 +118,7 @@ def salirse_curso(request, curso_id):
     inscripcion = get_object_or_404(Inscripcion, autor=request.user, id_curso_id=curso_id)
     if request.method == 'POST':
         inscripcion.delete()
-        return redirect('lista_cursos')  # o donde quieras redirigir después
+        return redirect('lista_cursos')  
     return render(request, 'aplicacion/confirmar_salida.html', {'curso': inscripcion.id_curso})
 
 
@@ -163,3 +162,31 @@ def lista_estudiantes_curso(request, curso_id):
         'curso': curso,
         'estudiantes': estudiantes,
 })
+@login_required
+def entregar_tarea(request, material_id):
+    material = get_object_or_404(Material, pk=material_id)
+
+    if not Inscripcion.objects.filter(autor=request.user, id_curso=material.id_curso).exists():
+        return HttpResponseForbidden("Debes estar inscrito para entregar tareas.")
+
+    if material.requiere_entrega and material.fecha_limite and timezone.now() > material.fecha_limite:
+        return HttpResponseForbidden("El plazo para entregar esta tarea ha vencido.")
+
+    entrega_existente = Entrega.objects.filter(estudiante=request.user, material=material).first()
+
+    if request.method == 'POST':
+        form = EntregaForm(request.POST, request.FILES, instance=entrega_existente)
+        if form.is_valid():
+            entrega = form.save(commit=False)
+            entrega.estudiante = request.user
+            entrega.material = material
+            entrega.save()
+            return redirect('detalle_curso', pk=material.id_curso.pk)
+    else:
+        form = EntregaForm(instance=entrega_existente)
+
+    return render(request, 'aplicacion/entregar_tarea.html', {
+        'form': form,
+        'material': material,
+        'entrega_existente': entrega_existente,
+    })

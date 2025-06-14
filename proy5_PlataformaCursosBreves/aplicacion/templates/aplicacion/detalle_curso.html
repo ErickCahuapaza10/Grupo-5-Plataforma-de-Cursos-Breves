@@ -19,7 +19,30 @@
         <li>No hay materiales aún.</li>
       {% endfor %}
     </ul>
-  {% endif %}
+    {% endif %}
+    {% if not is_profesor and user.is_authenticated and is_inscrito %}
+    <h3>Materiales (alumnos)</h3>
+    <ul>
+    {% for mat in materiales %}
+      <li>
+        {{ mat.nom_material }} –
+        <a href="{{ mat.archivo.url }}" target="_blank">Ver/Descargar</a>
+
+        {% if mat.requiere_entrega %}
+          <br><strong>Tarea obligatoria</strong>
+          {% if mat.fecha_limite %}
+            (Límite: {{ mat.fecha_limite|date:"d M Y H:i" }})
+          {% endif %}
+          {% if not mat.esta_vencido %}
+            <a href="{% url 'entregar_tarea' mat.pk %}">Entregar tarea</a>
+          {% else %}
+            <span style="color:red;">Plazo vencido</span>
+          {% endif %}
+        {% endif %}
+      </li>    
+  {% endfor %}
+    </ul>
+    {% endif %}
     {% if user.perfilusuario.rol == 'normal' %}
         {% if user.is_authenticated %}
             {% if not is_inscrito %}
@@ -62,18 +85,10 @@
         enctype="multipart/form-data">   
     {% csrf_token %}
     {{ form_material.as_p }}
-    <button type="submit">Guardar</button>
+    <button type="submit">Agregar</button>
   </form>
 {% endif %}
   {% endif %}
-
-
-
-
- 
-
-    
-
     <h3>VOLVER A LA LISTA DE CURSOS</h3>
     <a href=" {% url 'lista_cursos' %} ">Volver</a>
 

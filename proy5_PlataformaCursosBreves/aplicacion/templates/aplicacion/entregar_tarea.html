@@ -1,0 +1,19 @@
+{% extends "aplicacion/base.html" %}
+
+{% block content %}
+<h2>Entregar tarea: {{ material.nom_material }}</h2>
+
+{% if entrega_existente %}
+    <p>Ya habías enviado este archivo: <a href="{{ entrega_existente.archivo.url }}">{{ entrega_existente.archivo.name }}</a></p>
+    <p>Fecha de entrega: {{ entrega_existente.fecha_entrega }}</p>
+    <p>Puedes volver a subir si deseas reemplazarlo.</p>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enviar</button>
+</form>
+
+<a href="{% url 'detalle_curso' material.id_curso.id %}">Volver al curso</a>
+{% endblock %}
