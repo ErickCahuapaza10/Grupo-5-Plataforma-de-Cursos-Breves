@@ -29,6 +29,7 @@ class RegistroForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2', 'rol']
+        
 class Curso(models.Model):
     nom_curso = models.CharField(max_length=30)
     capacidad = models.IntegerField()
@@ -55,4 +56,13 @@ class Material(models.Model):
     
     def __str__(self):
         return f"{self.nom_material}"
+    
+class Entrega(models.Model):
+    estudiante = models.ForeignKey(User, on_delete=models.CASCADE, related_name='entregas')
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name='entregas')
+    archivo = models.FileField(upload_to='entregas/', null=True, blank=True)
+    fecha_entrega = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.estudiante.username} entregó {self.material.nom_material}"
     

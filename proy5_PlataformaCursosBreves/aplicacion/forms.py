@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profesor, Curso, Inscripcion, Material,PerfilUsuario
+from .models import Profesor, Curso, Inscripcion, Material,PerfilUsuario,Entrega
 
 class RegistroForm(UserCreationForm):
     rol = forms.ChoiceField(choices=PerfilUsuario.ROL_CHOICES, label="Tipo de usuario")
@@ -31,3 +31,8 @@ class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
         fields = ['nom_material', 'descripcion', 'archivo', 'id_curso', 'id_profesor']
+
+class EntregaForm(forms.ModelForm):
+    class Meta:
+        model = Entrega
+        fields = ['archivo']
