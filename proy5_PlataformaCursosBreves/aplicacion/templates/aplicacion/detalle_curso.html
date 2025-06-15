@@ -17,7 +17,7 @@
                 <ul>
                   {% for item in materiales_data %}
                     <li>
-                      <strong>{{ item.material.titulo }}</strong>
+                      <strong>{{ item.material.nom_material }}</strong>
                       
                       {# Si es tarea que requiere entrega #}
                       {% if item.material.requiere_entrega %}
@@ -78,13 +78,7 @@
               Ver estudiantes inscritos
             </a>
             <h3>AGREGAR MATERIAL</h3>
-            <form action="{% url 'subir_material' curso.pk %}"
-                  method="post"
-                  enctype="multipart/form-data">
-              {% csrf_token %}
-              {{ form_material.as_p }}
-              <button type="submit">Agregar</button>
-            </form>
+            <a href="{% url 'subir_material' curso.pk %}" class="btn btn-primary">Agregar</a>
             <h3>EDITAR CURSO</h3>
             <a href="{% url 'editar_curso' curso.pk %}">Editar</a>
             <h3>ELIMINAR CURSO</h3>
@@ -94,7 +88,15 @@
             </form>
         {% endif %}
     {% endif %}
-
+    
+    {% if is_profesor %}
+      <h3>📋 ESTUDIANTES QUE ENTREGARON TAREAS</h3>
+      <p>Aquí puedes ver todas las entregas de los estudiantes:</p>
+      <a href="{% url 'lista_entregas' curso.pk %}" class="btn btn-info">
+        📄 Ver lista completa de entregas
+      </a>
+    {% endif %}
+    
     <h3>VOLVER A LA LISTA DE CURSOS</h3>
     <a href="{% url 'lista_cursos' %}">Volver</a>
 {% endblock %}

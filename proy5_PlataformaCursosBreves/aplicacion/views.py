@@ -63,8 +63,8 @@ def cursos_inscritos(request):
 
 @login_required
 def detalle_curso(request, pk):
-    curso       = get_object_or_404(Curso, pk=pk)
-    materiales  = Material.objects.filter(id_curso=curso)
+    curso = get_object_or_404(Curso, pk=pk)
+    materiales = Material.objects.filter(id_curso=curso)
     profesor = curso.id_profesor
     is_profesor = (request.user.perfilusuario.rol == 'maestro')
     is_inscrito = Inscripcion.objects.filter(autor=request.user, id_curso=curso).exists()
@@ -81,11 +81,33 @@ def detalle_curso(request, pk):
         esta_vencido = False
         if m.requiere_entrega and m.fecha_limite:
             esta_vencido = now > m.fecha_limite
-        materiales_data.append({
+        
+        material_info = {
             'material': m,
             'entrega': entregas_map.get(m.id),
             'esta_vencido': esta_vencido,
-        })
+            'entregas': [],
+            'estudiantes_sin_entregar': []
+        }
+        
+        # Si es profesor y el material requiere entrega, obtener todas las entregas
+        if is_profesor and m.requiere_entrega:
+            # Obtener todas las entregas de este material
+            entregas = Entrega.objects.filter(material=m).select_related('estudiante')
+            material_info['entregas'] = entregas
+            
+            # Obtener estudiantes inscritos que NO han entregado
+            estudiantes_inscritos = [insc.autor for insc in Inscripcion.objects.filter(id_curso=curso).select_related('autor')]
+            estudiantes_que_entregaron = [e.estudiante for e in entregas]
+            estudiantes_sin_entregar = [est for est in estudiantes_inscritos if est not in estudiantes_que_entregaron]
+            material_info['estudiantes_sin_entregar'] = estudiantes_sin_entregar
+        
+        materiales_data.append(material_info)
+    
+    # Formulario para agregar material (solo para profesores)
+    #form_material = None
+    #if is_profesor:
+    #    form_material = MaterialForm()
     
     return render(request, 'aplicacion/detalle_curso.html', {
         'curso': curso,
@@ -93,7 +115,9 @@ def detalle_curso(request, pk):
         'is_profesor': is_profesor,
         'is_inscrito': is_inscrito,
         'materiales_data': materiales_data,
+        #'form_material': form_material,
     })
+
 
 def eliminar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
@@ -171,16 +195,48 @@ def lista_estudiantes_curso(request, curso_id):
     if curso.id_profesor.autor != request.user:
         return HttpResponseForbidden("No tienes permiso para ver los inscritos de este curso.")
 
-    estudiantes = (
+    # Obtener estudiantes inscritos
+    inscripciones = (
         Inscripcion.objects
         .filter(id_curso=curso)
         .select_related('autor')
         .order_by('autor__username')
     )
+    
+    # Obtener total de tareas que requieren entrega en el curso
+    total_tareas = Material.objects.filter(id_curso=curso, requiere_entrega=True).count()
+    
+    # Preparar datos de estudiantes con progreso
+    estudiantes_data = []
+    for inscripcion in inscripciones:
+        estudiante = inscripcion.autor
+        
+        # Contar entregas del estudiante en este curso
+        entregas_realizadas = Entrega.objects.filter(
+            estudiante=estudiante,
+            material__id_curso=curso,
+            material__requiere_entrega=True
+        ).count()
+        
+        # Calcular porcentaje
+        if total_tareas > 0:
+            porcentaje = round((entregas_realizadas / total_tareas) * 100)
+        else:
+            porcentaje = 0
+        
+        estudiantes_data.append({
+            'inscripcion': inscripcion,
+            'estudiante': estudiante,
+            'entregas_realizadas': entregas_realizadas,
+            'total_tareas': total_tareas,
+            'porcentaje': porcentaje
+        })
+    
     return render(request, 'aplicacion/lista_estudiantes.html', {
         'curso': curso,
-        'estudiantes': estudiantes,
-})
+        'estudiantes_data': estudiantes_data,
+        'total_tareas': total_tareas,
+    })
 @login_required
 def entregar_tarea(request, material_id):
     material = get_object_or_404(Material, pk=material_id)
@@ -230,3 +286,28 @@ def anular_entrega(request, entrega_id):
     curso_id = entrega.material.id_curso.pk
     entrega.delete()
     return redirect('detalle_curso', pk=curso_id)
+
+@login_required
+def lista_entregas(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    
+    # Verificar que sea el profesor del curso
+    if curso.id_profesor.autor != request.user:
+        return HttpResponseForbidden("No tienes permiso para ver las entregas de este curso.")
+    
+    # Obtener todas las entregas del curso
+    entregas = Entrega.objects.filter(
+        material__id_curso=curso
+    ).select_related('estudiante', 'material').order_by('-fecha_entrega')
+    
+    # Obtener materiales que requieren entrega
+    materiales_con_entrega = Material.objects.filter(
+        id_curso=curso, 
+        requiere_entrega=True
+    )
+    
+    return render(request, 'aplicacion/lista_entregas.html', {
+        'curso': curso,
+        'entregas': entregas,
+        'materiales_con_entrega': materiales_con_entrega,
+    })

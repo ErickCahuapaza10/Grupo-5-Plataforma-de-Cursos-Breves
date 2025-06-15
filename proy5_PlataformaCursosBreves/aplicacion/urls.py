@@ -19,4 +19,5 @@ urlpatterns = [
     path('material/<int:material_id>/entregar/', views.entregar_tarea, name='entregar_tarea'),
     path('cursos_creados/', views.cursos_creados, name='cursos_creados'),
     path('entrega/<int:entrega_id>/anular/', views.anular_entrega, name='anular_entrega'),
+    path('curso/<int:curso_id>/entregas/', views.lista_entregas, name='lista_entregas'),
 ]

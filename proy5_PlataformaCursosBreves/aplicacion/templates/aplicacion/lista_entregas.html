@@ -1,0 +1,68 @@
+{% extends "aplicacion/base.html" %}
+
+{% block content %}
+    <h1>📋 Lista de Entregas - {{ curso.nom_curso }}</h1>
+    
+    <div class="mb-3">
+        <a href="{% url 'detalle_curso' curso.pk %}" class="btn btn-secondary">⬅️ Volver al curso</a>
+    </div>
+
+    {% if entregas %}
+        <h3>Todas las entregas ({{ entregas|length }})</h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Estudiante</th>
+                        <th>Material/Tarea</th>
+                        <th>Fecha de Entrega</th>
+                        <th>Archivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entrega in entregas %}
+                    <tr>
+                        <td>{{ entrega.estudiante.username }}</td>
+                        <td>{{ entrega.material.nom_material }}</td>
+                        <td>{{ entrega.fecha_entrega|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if entrega.archivo %}
+                                <a href="{{ entrega.archivo.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                    📄 Ver archivo
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Sin archivo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4>ℹ️ No hay entregas aún</h4>
+            <p>Los estudiantes aún no han entregado tareas en este curso.</p>
+        </div>
+    {% endif %}
+
+    <h3>📚 Materiales que requieren entrega</h3>
+    {% if materiales_con_entrega %}
+        <ul class="list-group">
+            {% for material in materiales_con_entrega %}
+            <li class="list-group-item">
+                <strong>{{ material.nom_material }}</strong>
+                {% if material.fecha_limite %}
+                    <br><small class="text-muted">Fecha límite: {{ material.fecha_limite|date:"d/m/Y H:i" }}</small>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No hay materiales que requieran entrega en este curso.</p>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'lista_cursos' %}" class="btn btn-outline-primary">📚 Ver todos los cursos</a>
+    </div>
+{% endblock %}
