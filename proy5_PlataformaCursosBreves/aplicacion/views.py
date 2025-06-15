@@ -68,6 +68,7 @@ def detalle_curso(request, pk):
     profesor = curso.id_profesor
     is_profesor = (request.user.perfilusuario.rol == 'maestro')
     is_inscrito = Inscripcion.objects.filter(autor=request.user, id_curso=curso).exists()
+    
     return render(request, 'aplicacion/detalle_curso.html', {
         'curso': curso,
         'materiales': materiales,
@@ -190,3 +191,23 @@ def entregar_tarea(request, material_id):
         'material': material,
         'entrega_existente': entrega_existente,
     })
+    
+@login_required
+def cursos_creados(request):
+    if request.user.perfilusuario.rol != 'maestro':
+        return HttpResponseForbidden("Solo los profesores pueden acceder.")
+    
+    profesor = get_object_or_404(Profesor, autor=request.user)
+    cursos = Curso.objects.filter(id_profesor=profesor)
+    return render(request, 'aplicacion/cursos_creados.html', {'cursos': cursos})
+
+@login_required
+def anular_entrega(request, entrega_id):
+    entrega = get_object_or_404(Entrega, pk=entrega_id)
+
+    if entrega.estudiante != request.user:
+        return HttpResponseForbidden("No tienes permiso para anular esta entrega.")
+
+    curso_id = entrega.material.id_curso.pk
+    entrega.delete()
+    return redirect('detalle_curso', pk=curso_id)

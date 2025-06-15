@@ -1,0 +1,14 @@
+{% extends 'aplicacion/base.html' %}
+
+{% block content %}
+<h2>Cursos que dictas</h2>
+<ul>
+  {% for curso in cursos %}
+    <li>
+      <a href="{% url 'detalle_curso' curso.pk %}">{{ curso.nom_curso }}</a>
+    </li>
+  {% empty %}
+    <li>No has creado ningún curso.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

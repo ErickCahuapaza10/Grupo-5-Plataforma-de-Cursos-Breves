@@ -18,6 +18,7 @@
     {% if user.is_authenticated %}
     {% if user.perfilusuario.rol == 'maestro' %}
       <a href="{% url 'crear_curso' %}">Crear Curso</a>
+      <a href="{% url 'cursos_creados' %}">Ver mis cursos</a>
     {% elif user.perfilusuario.rol == 'normal' %}
       <a href="{% url 'cursos_inscritos' %}">Ver mis cursos inscritos</a>
     {% endif %}
