@@ -3,94 +3,98 @@
 {% block content %}
     <h1>DETALLE CURSO</h1>
     <p>
-        <strong>Nombre del Curso:</strong> {{curso.nom_curso}} <br>
-        <strong>Capacidad:</strong> {{curso.capacidad}} <br>
-        <strong>Nombre del Profesor:</strong> {{profesor.nombre}} {{ profesor.apellido }}
+        <strong>Nombre del Curso:</strong> {{ curso.nom_curso }} <br>
+        <strong>Capacidad:</strong> {{ curso.capacidad }} <br>
+        <strong>Nombre del Profesor:</strong> {{ profesor.nombre }} {{ profesor.apellido }}
     </p>
-    {% if not is_profesor and user.is_authenticated and is_inscrito %}
-    <h3>Materiales (alumnos)</h3>
-    <ul>
-      {% for mat in materiales %}
-        <li>
-          {{ mat.nom_material }} –
-          <a href="{{ mat.archivo.url }}" target="_blank">Ver/Descargar</a>
-        </li>
-      {% empty %}
-        <li>No hay materiales aún.</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-    {% if not is_profesor and user.is_authenticated and is_inscrito %}
-    <h3>Tareas (alumnos)</h3>
-    <ul>
-    {% for mat in materiales %}
-      <li>
-        {{ mat.nom_material }} 
 
-        {% if mat.requiere_entrega %}
-          <br><strong>Tarea obligatoria</strong>
-          {% if mat.fecha_limite %}
-            (Límite: {{ mat.fecha_limite|date:"d M Y H:i" }})
-          {% endif %}
-          
-          {% if not mat.esta_vencido %}
-            <a href="{% url 'entregar_tarea' mat.pk %}">Entregar tarea</a>
-          {% else %}
-            <span style="color:red;">Plazo vencido</span>
-          {% endif %}
-        {% endif %}
-      </li>    
-  {% endfor %}
-    </ul>
-    {% endif %}
-    {% if user.perfilusuario.rol == 'normal' %}
-        {% if user.is_authenticated %}
-            {% if not is_inscrito %}
-                <a href="{% url 'inscribirse_curso' curso.pk %}">Inscribirse</a>
-        {% else %}
-            <p>Ya estás inscrito en este curso.</p>
-        {% endif %}
-    {% endif %}
-    
-    {% endif %}
- {% if is_profesor and user.is_authenticated %}
- 
-     <h3>MATERIALES (edición)</h3>
-  <ul>
-    {% for mat in materiales %}
-      <li>
-        {{ mat.nom_material }} – {{ mat.descripcion }}
-        <a href="{% url 'editar_material' mat.pk %}">Editar</a>
-      </li>
-    {% empty %}
-      <li>No hay materiales aún.</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-  {% if is_profesor %}
-  <a href="{% url 'lista_estudiantes' curso.pk %}" class="btn btn-primary">Ver estudiantes inscritos </a>
-  {% endif %}
-  {% if user.perfilusuario.rol == 'maestro' %}
     {% if user.is_authenticated %}
-        <h3>EDITAR CURSO</h3>
-        <a href=" {% url 'editar_curso' curso.pk %} ">Editar</a>
+        
+        {# Sección para estudiante inscrito #}
+        {% if not is_profesor %}
+            {% if is_inscrito %}
+                <h3>Materiales y Tareas</h3>
+                <ul>
+                  {% for item in materiales_data %}
+                    <li>
+                      <strong>{{ item.material.titulo }}</strong>
+                      
+                      {# Si es tarea que requiere entrega #}
+                      {% if item.material.requiere_entrega %}
+                        <br>
+                        {% if item.entrega %}
+                          <span class="badge badge-success">Entregado</span>
+                          <a href="{% url 'anular_entrega' item.entrega.id %}"
+                             class="btn btn-sm btn-danger">
+                            Anular entrega
+                          </a>
+                        {% else %}
+                          {% if not item.esta_vencido %}
+                            <a href="{% url 'entregar_tarea' item.material.id %}"
+                               class="btn btn-sm btn-primary">
+                              Entregar tarea<BR>
+                            </a>
+                          {% else %}
+                            <span style="color:red;">Plazo vencido</span>
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                      
+                      {# Siempre mostrar enlace al archivo, si existe #}
+                      {% if item.material.archivo %}
+                        <a href="{{ item.material.archivo.url }}" class="btn btn-sm btn-secondary">
+                          Ver / Descargar contenido
+                        </a>
+                      {% endif %}
+                    </li>
+                  {% empty %}
+                    <li>No hay materiales aún.</li>
+                  {% endfor %}
+                </ul>
+            {% else %}
+                {# No está inscrito aún #}
+                {% if user.perfilusuario.rol == 'normal' %}
+                  <a href="{% url 'inscribirse_curso' curso.pk %}" class="btn btn-primary">
+                    Inscribirse en el curso
+                  </a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {# Sección de edición para profesor #}
+        {% if is_profesor %}
+            <h3>MATERIALES (edición)</h3>
+            <ul>
+              {% for mat in materiales_data %}
+                <li>
+                  {{ mat.material.nom_material }} – {{ mat.material.descripcion }}
+                  <a href="{% url 'editar_material' mat.material.pk %}">Editar</a>
+                </li>
+              {% empty %}
+                <li>No hay materiales aún.</li>
+              {% endfor %}
+            </ul>
+            <a href="{% url 'lista_estudiantes' curso.pk %}" class="btn btn-primary">
+              Ver estudiantes inscritos
+            </a>
+            <h3>AGREGAR MATERIAL</h3>
+            <form action="{% url 'subir_material' curso.pk %}"
+                  method="post"
+                  enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form_material.as_p }}
+              <button type="submit">Agregar</button>
+            </form>
+            <h3>EDITAR CURSO</h3>
+            <a href="{% url 'editar_curso' curso.pk %}">Editar</a>
+            <h3>ELIMINAR CURSO</h3>
+            <form action="{% url 'eliminar_curso' curso.pk %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Eliminar curso</button>
+            </form>
+        {% endif %}
     {% endif %}
 
-    <h3>ELIMINAR CURSO</h3>
-    <a href=" {% url 'eliminar_curso' curso.pk %} ">Eliminar</a>
-     {% if is_profesor %}
-  <h3>AGREGAR MATERIAL</h3>
-  <form action="{% url 'subir_material' curso.pk %}"
-        method="post"
-        enctype="multipart/form-data">   
-    {% csrf_token %}
-    {{ form_material.as_p }}
-    <button type="submit">Agregar</button>
-  </form>
-{% endif %}
-  {% endif %}
     <h3>VOLVER A LA LISTA DE CURSOS</h3>
-    <a href=" {% url 'lista_cursos' %} ">Volver</a>
-
-   
-{% endblock  %}
+    <a href="{% url 'lista_cursos' %}">Volver</a>
+{% endblock %}

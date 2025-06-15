@@ -69,12 +69,30 @@ def detalle_curso(request, pk):
     is_profesor = (request.user.perfilusuario.rol == 'maestro')
     is_inscrito = Inscripcion.objects.filter(autor=request.user, id_curso=curso).exists()
     
+    entregas_map = {}
+    if not is_profesor and is_inscrito:
+        qs = Entrega.objects.filter(estudiante=request.user, material__in=materiales)
+        entregas_map = { e.material_id: e for e in qs }
+
+    # lista de dicts para el template, incluyendo si está vencido
+    materiales_data = []
+    now = timezone.now()
+    for m in materiales:
+        esta_vencido = False
+        if m.requiere_entrega and m.fecha_limite:
+            esta_vencido = now > m.fecha_limite
+        materiales_data.append({
+            'material': m,
+            'entrega': entregas_map.get(m.id),
+            'esta_vencido': esta_vencido,
+        })
+    
     return render(request, 'aplicacion/detalle_curso.html', {
         'curso': curso,
-        'materiales': materiales,
         'profesor': profesor,
         'is_profesor': is_profesor,
         'is_inscrito': is_inscrito,
+        'materiales_data': materiales_data,
     })
 
 def eliminar_curso(request, pk):
@@ -174,7 +192,7 @@ def entregar_tarea(request, material_id):
         return HttpResponseForbidden("El plazo para entregar esta tarea ha vencido.")
 
     entrega_existente = Entrega.objects.filter(estudiante=request.user, material=material).first()
-
+    allow_resubmit = request.GET.get('resubmit') == '1'
     if request.method == 'POST':
         form = EntregaForm(request.POST, request.FILES, instance=entrega_existente)
         if form.is_valid():
@@ -190,6 +208,7 @@ def entregar_tarea(request, material_id):
         'form': form,
         'material': material,
         'entrega_existente': entrega_existente,
+        'allow_resubmit': allow_resubmit,
     })
     
 @login_required

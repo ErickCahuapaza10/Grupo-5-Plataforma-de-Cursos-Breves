@@ -4,16 +4,32 @@
 <h2>Entregar tarea: {{ material.nom_material }}</h2>
 
 {% if entrega_existente %}
-    <p>Ya habías enviado este archivo: <a href="{{ entrega_existente.archivo.url }}">{{ entrega_existente.archivo.name }}</a></p>
-    <p>Fecha de entrega: {{ entrega_existente.fecha_entrega }}</p>
-    <p>Puedes volver a subir si deseas reemplazarlo.</p>
-{% endif %}
+    <div class="alert alert-info">
+    <p>Ya entregaste esta tarea el {{ entrega_existente.fecha_entrega|date:"d/m/Y H:i" }}.</p>
+    <a href="{% url 'anular_entrega' entrega_existente.id %}" class="btn btn-sm btn-danger">
+        Anular entrega
+    </a>
+    <a href="{% url 'entregar_tarea' material.pk %}?resubmit=1" class="btn btn-sm btn-primary">
+        Volver a enviar
+    </a>
+    </div>
 
-<form method="post" enctype="multipart/form-data">
+    {% if allow_resubmit %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Enviar nueva versión</button>
+    </form>
+    {% endif %}
+
+
+{% else %}
+    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Enviar</button>
-</form>
+    <button type="submit" class="btn btn-success">Enviar tarea</button>
+    </form>
+{% endif %}
 
 <a href="{% url 'detalle_curso' material.id_curso.id %}">Volver al curso</a>
 {% endblock %}
