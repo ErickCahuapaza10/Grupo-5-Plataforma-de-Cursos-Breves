@@ -1,6 +1,8 @@
 {% extends "aplicacion/base.html" %}
+{% load static %}
 
 {% block content %}
+    <link rel="stylesheet" href="{% static 'aplicacion/css/detalle_curso.css' %}">
     <h1>DETALLE CURSO</h1>
     <p>
         <strong>Nombre del Curso:</strong> {{ curso.nom_curso }} <br>
@@ -52,7 +54,6 @@
                   {% endfor %}
                 </ul>
             {% else %}
-                {# No está inscrito aún #}
                 {% if user.perfilusuario.rol == 'normal' %}
                   <a href="{% url 'inscribirse_curso' curso.pk %}" class="btn btn-primary">
                     Inscribirse en el curso
@@ -60,15 +61,13 @@
                 {% endif %}
             {% endif %}
         {% endif %}
-
-        {# Sección de edición para profesor #}
         {% if is_profesor %}
             <h3>MATERIALES (edición)</h3>
             <ul>
               {% for mat in materiales_data %}
                 <li>
                   {{ mat.material.nom_material }} – {{ mat.material.descripcion }}
-                  <a href="{% url 'editar_material' mat.material.pk %}">Editar</a>
+                  <a href="{% url 'editar_material' mat.material.pk %}" class="btn btn-sm btn-warning">✏️ Editar</a>
                 </li>
               {% empty %}
                 <li>No hay materiales aún.</li>
@@ -80,7 +79,7 @@
             <h3>AGREGAR MATERIAL</h3>
             <a href="{% url 'subir_material' curso.pk %}" class="btn btn-primary">Agregar</a>
             <h3>EDITAR CURSO</h3>
-            <a href="{% url 'editar_curso' curso.pk %}">Editar</a>
+            <a href="{% url 'editar_curso' curso.pk %}" class="btn btn-sm btn-warning">🛠️ Editar curso</a>
             <h3>ELIMINAR CURSO</h3>
             <form action="{% url 'eliminar_curso' curso.pk %}" method="post" style="display:inline;">
               {% csrf_token %}
@@ -98,5 +97,5 @@
     {% endif %}
     
     <h3>VOLVER A LA LISTA DE CURSOS</h3>
-    <a href="{% url 'lista_cursos' %}">Volver</a>
+    <a href="{% url 'lista_cursos' %}" class="btn btn-secondary">🔙 Volver</a>
 {% endblock %}

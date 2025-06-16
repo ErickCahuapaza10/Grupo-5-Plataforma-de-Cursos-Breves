@@ -1,5 +1,7 @@
 {% extends 'aplicacion/base.html' %}
+{% load static %}
 {% block content %}
+   <link rel="stylesheet" href="{% static 'aplicacion/css/login.css' %}">
   <h2>Iniciar Sesion</h2>
   <form method="post">
     {% csrf_token %}
