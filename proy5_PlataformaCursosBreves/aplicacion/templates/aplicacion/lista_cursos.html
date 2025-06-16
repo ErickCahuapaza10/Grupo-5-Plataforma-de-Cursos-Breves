@@ -2,10 +2,17 @@
 {% block content %}
     
     <h1>LISTA DE CURSOS</h1>
-    <ul>
+    <ul style="list-style: none; padding: 0;">
         {% for curso in cursos %}
-                <li>Nombre:{{curso.nom_curso}} ------ Capacidad:{{curso.capacidad}}</li><a href="{% url 'detalle_curso' curso.pk %}">Detalle</a>
-                    
+            <li style="background: #f5f5f5; margin-bottom: 12px; padding: 16px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between;">
+                <span>
+                    <strong>Nombre:</strong> {{ curso.nom_curso }} &nbsp; | &nbsp; 
+                    <strong>Capacidad:</strong> {{ curso.capacidad }}
+                </span>
+                <a href="{% url 'detalle_curso' curso.pk %}" style="background: #007bff; color: #fff; padding: 8px 16px; border-radius: 4px; text-decoration: none; transition: background 0.2s;">
+                    Detalle
+                </a>
+            </li>
         {% endfor %}
     </ul>
 

@@ -1,6 +1,5 @@
 {% extends "aplicacion/base.html" %}
 {% load static %}
-
 {% block content %}
     <link rel="stylesheet" href="{% static 'aplicacion/css/detalle_curso.css' %}">
     <h1>DETALLE CURSO</h1>
@@ -12,47 +11,49 @@
 
     {% if user.is_authenticated %}
         
-        {# Sección para estudiante inscrito #}
+        
         {% if not is_profesor %}
             {% if is_inscrito %}
-                <h3>Materiales y Tareas</h3>
-                <ul>
-                  {% for item in materiales_data %}
-                    <li>
-                      <strong>{{ item.material.nom_material }}</strong>
-                      
-                      {# Si es tarea que requiere entrega #}
-                      {% if item.material.requiere_entrega %}
-                        <br>
-                        {% if item.entrega %}
-                          <span class="badge badge-success">Entregado</span>
-                          <a href="{% url 'anular_entrega' item.entrega.id %}"
-                             class="btn btn-sm btn-danger">
-                            Anular entrega
-                          </a>
-                        {% else %}
-                          {% if not item.esta_vencido %}
-                            <a href="{% url 'entregar_tarea' item.material.id %}"
-                               class="btn btn-sm btn-primary">
-                              Entregar tarea<BR>
-                            </a>
-                          {% else %}
-                            <span style="color:red;">Plazo vencido</span>
-                          {% endif %}
-                        {% endif %}
+              <h3 class="mt-4 mb-3">Materiales y Tareas</h3>
+              <ul class="list-group mb-4">
+                {% for item in materiales_data %}
+                <li class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                  <div>
+                  <strong>{{ item.material.nom_material }}</strong>
+                  {% if item.material.descripcion %}
+                    <small class="text-muted d-block">{{ item.material.descripcion }}</small>
+                  {% endif %}
+                  {% if item.material.requiere_entrega %}
+                    <div class="mt-2">
+                    {% if item.entrega %}
+                      <span class="badge bg-success">Entregado</span>
+                      <a href="{% url 'anular_entrega' item.entrega.id %}" class="btn btn-sm btn-outline-danger ms-2">
+                      Anular entrega
+                      </a>
+                    {% else %}
+                      {% if not item.esta_vencido %}
+                      <a href="{% url 'entregar_tarea' item.material.id %}" class="btn btn-sm btn-primary ms-2">
+                        Entregar tarea
+                      </a>
+                      {% else %}
+                      <span class="badge bg-danger ms-2">Plazo vencido</span>
                       {% endif %}
-                      
-                      {# Siempre mostrar enlace al archivo, si existe #}
-                      {% if item.material.archivo %}
-                        <a href="{{ item.material.archivo.url }}" class="btn btn-sm btn-secondary">
-                          Ver / Descargar contenido
-                        </a>
-                      {% endif %}
-                    </li>
-                  {% empty %}
-                    <li>No hay materiales aún.</li>
-                  {% endfor %}
-                </ul>
+                    {% endif %}
+                    </div>
+                  {% endif %}
+                  </div>
+                  <div class="mt-2 mt-md-0">
+                  {% if item.material.archivo %}
+                    <a href="{{ item.material.archivo.url }}" class="btn btn-sm btn-secondary">
+                    Ver / Descargar contenido
+                    </a>
+                  {% endif %}
+                  </div>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-center text-muted">No hay materiales aún.</li>
+                {% endfor %}
+              </ul>
             {% else %}
                 {% if user.perfilusuario.rol == 'normal' %}
                   <a href="{% url 'inscribirse_curso' curso.pk %}" class="btn btn-primary">
@@ -89,6 +90,7 @@
     {% endif %}
     
     {% if is_profesor %}
+    
       <h3>📋 ESTUDIANTES QUE ENTREGARON TAREAS</h3>
       <p>Aquí puedes ver todas las entregas de los estudiantes:</p>
       <a href="{% url 'lista_entregas' curso.pk %}" class="btn btn-info">

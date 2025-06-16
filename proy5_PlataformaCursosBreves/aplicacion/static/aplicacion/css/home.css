@@ -1,0 +1,91 @@
+
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+.header {
+    background-color: #4f8cff;
+    color: #fff;
+    padding: 30px 0;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+h1, h2, h3 {
+    color: #4f8cff;
+    margin-bottom: 16px;
+}
+
+.button {
+    background: #4f8cff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 20px;
+}
+.button:hover {
+    background: #376fcc;
+    box-shadow: 0 4px 16px rgba(79, 140, 255, 0.15);
+}
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(79, 140, 255, 0.08);
+    padding: 40px 32px;
+}
+
+.course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 32px;
+    margin-top: 32px;
+}
+
+.course-card {
+    background: #f7faff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(79, 140, 255, 0.07);
+    padding: 24px 18px;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.course-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(79, 140, 255, 0.13);
+}
+
+.course-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #376fcc;
+    margin-bottom: 10px;
+}
+
+.course-description {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 700px) {
+    .container {
+        padding: 18px 6px;
+    }
+    .course-list {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+}
+

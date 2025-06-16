@@ -1,11 +1,27 @@
 {% extends "aplicacion/base.html" %}
 {% block content %}
   <h2>Mis cursos</h2>
-  <ul>
-    {% for curso in cursos %}
-      <li><a href="{% url 'detalle_curso' curso.pk %}">{{ curso.nom_curso }}</a></li>
-    {% empty %}
-      <li>No estás inscrito en ningún curso.</li>
-    {% endfor %}
-  </ul>
+  <div class="container mt-4">
+    {% if cursos %}
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for curso in cursos %}
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <a href="{% url 'detalle_curso' curso.pk %}" class="text-decoration-none text-primary">
+                    {{ curso.nom_curso }}
+                  </a>
+                </h5>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info mt-3" role="alert">
+        No estás inscrito en ningún curso.
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

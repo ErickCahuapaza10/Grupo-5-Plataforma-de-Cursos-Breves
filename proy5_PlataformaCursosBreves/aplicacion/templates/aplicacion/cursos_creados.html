@@ -1,14 +1,24 @@
 {% extends 'aplicacion/base.html' %}
-
+{% load static %}
 {% block content %}
-<h2>Cursos que dictas</h2>
-<ul>
-  {% for curso in cursos %}
-    <li>
-      <a href="{% url 'detalle_curso' curso.pk %}">{{ curso.nom_curso }}</a>
-    </li>
-  {% empty %}
-    <li>No has creado ningún curso.</li>
-  {% endfor %}
-</ul>
+
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Cursos que dictas</h2>
+    
+    {% if cursos %}
+        <div class="list-group">
+            {% for curso in cursos %}
+                <a href="{% url 'detalle_curso' curso.pk %}" class="list-group-item list-group-item-action">
+                    {{ curso.nom_curso }}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            No has creado ningún curso.
+        </div>
+    {% endif %}
+</div>
+
 {% endblock %}

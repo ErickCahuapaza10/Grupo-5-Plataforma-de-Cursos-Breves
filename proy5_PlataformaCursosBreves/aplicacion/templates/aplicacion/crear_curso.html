@@ -1,6 +1,9 @@
 {% extends "aplicacion/base.html" %}
+{% load static %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'aplicacion/css/crearcurso.css' %}">
     <h1>CREAR CURSO</h1>
     <form action="" method="post">
         {% csrf_token %}
