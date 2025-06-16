@@ -1,0 +1,9 @@
+{% extends 'aplicacion/base.html' %}
+{% block content %}
+  <h2>Inscribirse en {{ curso.titulo }}</h2>
+  <p>¿Seguro que quieres inscribirte en este curso?</p>
+  <form method="post">{% csrf_token %}
+    <button class="btn btn-primary">Sí, inscribirme</button>
+    <a href="{% url 'detalle_curso' pk=curso.id %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+{% endblock %}
