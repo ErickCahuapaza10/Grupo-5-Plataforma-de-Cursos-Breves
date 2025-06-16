@@ -10,46 +10,46 @@
     <title>Document</title>
 </head>
 <body>
-    <header>
+    <header class="bg-dark text-light py-3">
+      <h1>PROYECTO PLATAFORMA DE CURSOS BREVES</h1>
+      <nav style="background-color:#f2f2f2; padding: 10px;" class="bg-dark text-white py-2">
+        <a class="btn btn-outline-primary" href="{% url 'home' %}">Inicio</a>
+        <a class="btn btn-outline-success" href="{% url 'lista_cursos' %}">Ver Cursos</a>
+
+        {% if user.is_authenticated %}
+          {% if user.perfilusuario.rol == 'maestro' %}
+            <a class="btn btn-outline-warning" href="{% url 'crear_curso' %}">Crear Curso</a>
+            <a class="btn btn-outline-primary" href="{% url 'cursos_creados' %}">Ver mis cursos</a>
+          {% elif user.perfilusuario.rol == 'normal' %}
+            <a class="btn btn-outline-success" href="{% url 'cursos_inscritos' %}">Ver mis cursos inscritos</a>
+          {% endif %}
+          <span>Bienvenido {{ user.username }}</span>
+          <a class="btn btn-outline-danger btn-sm" href="{% url 'salir' %}">Cerrar Sesión</a>
+        {% else %}
+          <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'login' %}">Iniciar Sesión</a>
+          <a class="btn btn-outline-info btn-sm" href="{% url 'registrar' %}">Registrarse</a>
+        {% endif %}
+      </nav>
     </header>
 
     <main>
-        <h1>PROYECTO PLATAFORMA DE CURSOS BREVES</h1>
-        <nav style="background-color:#f2f2f2; padding: 10px;">
-        <a href="{% url 'home' %}">Inicio</a>
-        <a href="{% url 'lista_cursos' %}">Ver Cursos</a>
+      <div class="container mt-3">
+        {% if messages %}
+          {% for m in messages %}
+            <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+              {{ m }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
 
-    {% if user.is_authenticated %}
-    {% if user.perfilusuario.rol == 'maestro' %}
-      <a href="{% url 'crear_curso' %}">Crear Curso</a>
-      <a href="{% url 'cursos_creados' %}">Ver mis cursos</a>
-    {% elif user.perfilusuario.rol == 'normal' %}
-      <a href="{% url 'cursos_inscritos' %}">Ver mis cursos inscritos</a>
-    {% endif %}
+        {% block content %}
 
-    <span>Bienvenido {{ user.username }}</span>
-    <a href="{% url 'salir' %}">Cerrar Sesión</a>
-  {% else %}
-    <a href="{% url 'login' %}">Iniciar Sesión</a>
-    <a href="{% url 'registrar' %}">Registrarse</a>
-  {% endif %}
-    </nav>
-        
-        <div class="container mt-3">
-    {% if messages %}
-      {% for m in messages %}
-        <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
-          {{ m }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      {% endfor %}
-    {% endif %}
-    {% block content %}{% endblock %}
-  </div>
-        
+        {% endblock %}
+      </div>   
     </main>
 
-    <footer>
+    <footer class="bg-dark text-light text-center py-3">
         <h3>© 2025 Programacion Web III - Todos los derechos reservados</h3>
     </footer>
     
