@@ -37,7 +37,7 @@ class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
         fields = ['nom_material', 'descripcion', 'archivo', 'requiere_entrega', 'fecha_limite']
-        widgets = {'fecha_limite': forms.DateTimeInput(attrs={'type': 'datetime-local'}),}
+        widgets = {'fecha_limite': forms.DateTimeInput(attrs={'type': 'datetime-local'}),            'requiere_entrega': forms.CheckboxInput(attrs={'class': 'form-check-input'})}
 
 
 class EntregaForm(forms.ModelForm):

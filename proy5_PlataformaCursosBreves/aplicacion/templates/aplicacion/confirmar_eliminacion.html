@@ -1,12 +1,12 @@
 {% extends "aplicacion/base.html" %}
-
 {% block content %}
-    <h1>ELIMINAR CURSO</h1>
-    <p>¿Estas seguro de que deseas eliminar "{{ curso.nom_curso}}"?</p>
-    <form action="" method="post">
-        {% csrf_token %}  
-
-        <button type="submit">Sí, eliminar</button>
-        <a href=" {% url 'detalle_curso' curso.pk %} ">Cancelar</a>
-    </form>
-{% endblock  %}
+<div class="container mt-5">
+  <h3 class="text-danger">¿Eliminar curso?</h3>
+  <p>Estás a punto de borrar "<strong>{{ curso.nom_curso }}</strong>".</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger me-2">Sí, eliminar</button>
+    <a href="{% url 'detalle_curso' curso.pk %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

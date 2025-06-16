@@ -1,24 +1,33 @@
 {% extends 'aplicacion/base.html' %}
-{% load static %}
 {% block content %}
-
-
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Cursos que dictas</h2>
-    
-    {% if cursos %}
-        <div class="list-group">
-            {% for curso in cursos %}
-                <a href="{% url 'detalle_curso' curso.pk %}" class="list-group-item list-group-item-action">
-                    {{ curso.nom_curso }}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Cursos que dictas</h2>
+  {% if cursos %}
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      {% for curso in cursos %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="{% url 'detalle_curso' curso.pk %}"
+                   class="text-decoration-none text-primary">
+                  {{ curso.nom_curso }}
                 </a>
-            {% endfor %}
+              </h5>
+              {% if curso.descripcion %}
+                <p class="card-text text-truncate text-muted">
+                  {{ curso.descripcion }}
+                </p>
+              {% endif %}
+            </div>
+          </div>
         </div>
-    {% else %}
-        <div class="alert alert-info text-center" role="alert">
-            No has creado ningún curso.
-        </div>
-    {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center mt-3" role="alert">
+      No has creado ningún curso.
+    </div>
+  {% endif %}
 </div>
-
 {% endblock %}

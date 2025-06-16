@@ -1,11 +1,43 @@
 {% extends "aplicacion/base.html" %}
+{% load widget_tweaks %}
 
 {% block content %}
-    <h1>EDITAR CURSO</h1>
-    <form action="" method="post">
-        {% csrf_token %}  
-        {{ form.as_p }}
-
-        <button type="submit">Guardar</button>
-    </form>
-{% endblock  %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-warning text-white">
+          <h5 class="mb-0">Editar Curso</h5>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field|add_class:"form-control" }}
+                {% if field.help_text %}
+                  <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% for err in field.errors %}
+                  <div class="text-danger small">{{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            
+            <div class="d-flex justify-content-end">
+              <a href="{% url 'detalle_curso' form.instance.pk %}" class="btn btn-secondary me-2">
+                Cancelar
+              </a>
+              <button type="submit" class="btn btn-warning">
+                Guardar cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

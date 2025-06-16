@@ -1,45 +1,62 @@
 {% extends 'aplicacion/base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-  <h2>Subir Material para: {{ curso.nom_curso }}</h2>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Subir Material para: {{ curso.nom_curso }}</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-  <form action="{% url 'subir_material' curso.pk %}"
-        method="post"
-        enctype="multipart/form-data">
-    {% csrf_token %}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for err in form.non_field_errors %}{{ err }}<br>{% endfor %}
+              </div>
+            {% endif %}
 
-   
-    {% if form.non_field_errors %}
-      <ul class="errorlist">
-        {% for err in form.non_field_errors %}
-          <li>{{ err }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+            {% for field in form %}
+              {% if field.name == 'requiere_entrega' %}
+                <div class="form-check mb-3">
+  {{ field|add_class:"form-check-input" }}
+  <label for="{{ field.id_for_label }}" class="form-check-label ms-2">
+    {{ field.label }}
+  </label>
+  {% for err in field.errors %}
+    <div class="text-danger small">{{ err }}</div>
+  {% endfor %}
+</div>
 
-    {% for field in form %}
-      <div class="form-group">
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.help_text %}
-          <small class="form-text text-muted">{{ field.help_text }}</small>
-        {% endif %}
-        {% if field.errors %}
-          <ul class="errorlist">
-            {% for err in field.errors %}
-              <li>{{ err }}</li>
+              {% else %}
+                <div class="mb-3">
+                  {{ field.label_tag }}
+                  {{ field|add_class:"form-control" }}
+                  {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                  {% endif %}
+                  {% for err in field.errors %}
+                    <div class="text-danger small">{{ err }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
             {% endfor %}
-          </ul>
-        {% endif %}
+
+            <div class="d-flex justify-content-end">
+              <a href="{% url 'detalle_curso' curso.pk %}" class="btn btn-secondary me-2">
+                Cancelar
+              </a>
+              <button type="submit" class="btn btn-primary">
+                Subir Material
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    {% endfor %}
-
-    <button type="submit" class="btn btn-primary">Subir Material</button>
-  </form>
-
-  <p>
-    <a href="{% url 'detalle_curso' curso.pk %}">
-      ← Volver al detalle del curso
-    </a>
-  </p>
+    </div>
+  </div>
+</div>
 {% endblock %}

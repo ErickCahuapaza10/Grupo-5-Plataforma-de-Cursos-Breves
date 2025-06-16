@@ -111,15 +111,20 @@ def detalle_curso(request, pk):
         
     })
 
-
 def eliminar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
+    # Solo el profesor que lo creó puede eliminar
     if curso.id_profesor.autor != request.user:
-        return HttpResponseForbidden("No tienes permiso para eliminar este curso.")
+        return HttpResponseForbidden()
     if request.method == 'POST':
         curso.delete()
+        messages.success(request, f'El curso "{curso.nom_curso}" fue eliminado.')
         return redirect('lista_cursos')
-    return render(request, 'aplicacion/confirmar_eliminacion.html', {'curso': curso})
+    # GET → mostramos confirmación
+    return render(request, 'aplicacion/confirmar_eliminacion.html', {
+        'curso': curso
+    })
+
 
 def editar_material(request, pk):
     material = get_object_or_404(Material, pk=pk)
