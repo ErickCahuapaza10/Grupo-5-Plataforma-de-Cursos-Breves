@@ -25,6 +25,9 @@
                   {% endif %}
                   {% if item.material.requiere_entrega %}
                     <div class="mt-2">
+                      <small class="text-muted">
+                        Fecha límite: {{ item.material.fecha_limite|date:"d/m/Y H:i" }}
+                      </small><br>
                     {% if item.entrega %}
                       <span class="badge bg-success">Entregado</span>
                       <a href="{% url 'anular_entrega' item.entrega.id %}" class="btn btn-sm btn-outline-danger ms-2">
@@ -82,10 +85,7 @@
             <h3>EDITAR CURSO</h3>
             <a href="{% url 'editar_curso' curso.pk %}" class="btn btn-sm btn-warning">🛠️ Editar curso</a>
             <h3>ELIMINAR CURSO</h3>
-            <form action="{% url 'eliminar_curso' curso.pk %}" method="post" style="display:inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Eliminar curso</button>
-            </form>
+            <a href="{% url 'eliminar_curso' curso.pk %}" class="btn btn-danger">Eliminar curso</a>
         {% endif %}
     {% endif %}
     

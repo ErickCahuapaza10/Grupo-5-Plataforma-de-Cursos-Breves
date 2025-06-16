@@ -52,6 +52,7 @@ def crear_curso(request):
 
     return render(request, 'aplicacion/crear_curso.html', {'form': form})
 
+@login_required
 def lista_cursos(request):
     cursos = Curso.objects.all()
     return render(request,'aplicacion/lista_cursos.html', {'cursos':cursos})
@@ -113,14 +114,12 @@ def detalle_curso(request, pk):
 
 def eliminar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
-    # Solo el profesor que lo creó puede eliminar
     if curso.id_profesor.autor != request.user:
         return HttpResponseForbidden()
     if request.method == 'POST':
         curso.delete()
         messages.success(request, f'El curso "{curso.nom_curso}" fue eliminado.')
         return redirect('lista_cursos')
-    # GET → mostramos confirmación
     return render(request, 'aplicacion/confirmar_eliminacion.html', {
         'curso': curso
     })

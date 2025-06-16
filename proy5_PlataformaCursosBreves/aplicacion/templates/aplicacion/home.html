@@ -11,20 +11,20 @@
         <h3> {{ user.username }} Bienvenido!! </h3>
     {% else %}
         <div style="color: #1976d2; font-size: 1.3rem; font-weight: 500; font-family: 'Segoe UI', Arial, sans-serif; background: #e3f2fd; border-radius: 8px; padding: 1em; margin: 1em 0;">
-            Este blog es un sitio para sus cursos!!! <br>
+            Este blog es un sitio para una plataforma de cursos breves!!! <br>
             <span style="color: #388e3c; font-size: 1.1rem; font-style: italic;">Creado con Django!!!</span>
         </div>
     {% endif %}
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-            <img src="{% static 'aplicacion/img/nacho.jpg' %}" class="d-block mx-auto carousel-img" style="width: 60%; height: auto;" alt="...">
+            <img src="{% static 'aplicacion/img/plataforma.jpg' %}" class="d-block mx-auto carousel-img" style="width: 60%; height: auto;" alt="...">
             </div>
             <div class="carousel-item">
             <img src="{% static 'aplicacion/img/participantes.jpg' %}" class="d-block mx-auto carousel-img" style="width: 60%; height: auto;" alt="Participantes">
             </div>
          <div class="carousel-item">
-            <img src="{% static 'aplicacion/img/sebas.jpg' %}" class="d-block mx-auto carousel-img" style="width: 60%; height: auto;" alt="...">
+            <img src="{% static 'aplicacion/img/cursos.jpg' %}" class="d-block mx-auto carousel-img" style="width: 60%; height: auto;" alt="...">
             </div>
          </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
