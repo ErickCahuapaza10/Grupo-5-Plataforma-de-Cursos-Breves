@@ -1,6 +1,6 @@
 {% extends 'aplicacion/base.html' %}
 {% block content %}
-  <h2>Inscribirse en {{ curso.titulo }}</h2>
+  <h2>Inscribirse en {{ curso.nom_curso }}</h2>
   <p>¿Seguro que quieres inscribirte en este curso?</p>
   <form method="post">{% csrf_token %}
     <button class="btn btn-primary">Sí, inscribirme</button>
